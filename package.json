@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"be-dev": "npm run dev --prefix=backend"
+		"be-dev": "npm run dev --prefix=backend",
+		"fe-dev": "npm start --prefix=frontend"
 	},
 	"keywords": [],
 	"author": "",

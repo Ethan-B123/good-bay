@@ -1,11 +1,12 @@
-import "reflect-metadata";
-import { createConnection } from "typeorm";
-import { init as userRouteInit } from "./routes/User";
-import * as bodyParser from "body-parser";
-import * as express from "express";
+import 'reflect-metadata';
+import { createConnection } from 'typeorm';
+import { init as userRouteInit } from './routes/User';
+import ebayApiRoutes from './routes/EbayAPI';
+import * as bodyParser from 'body-parser';
+import * as express from 'express';
 
 // https://github.com/whitecolor/ts-node-dev/issues/71
-process.on("SIGTERM", () => process.kill(process.pid, "SIGINT"));
+process.on('SIGTERM', () => process.kill(process.pid, 'SIGINT'));
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -14,13 +15,15 @@ app.use(bodyParser.json());
 //
 
 (async () => {
-  const connection = await createConnection();
+	const connection = await createConnection();
 
-  app.use("/users", userRouteInit(connection));
+	app.use('/users', userRouteInit(connection));
 
-  app.listen(5000, () => {
-    console.log("5000");
-  });
+	app.use('/ebay', ebayApiRoutes);
+
+	app.listen(5000, () => {
+		console.log('5000');
+	});
 })();
 
 // createConnection()

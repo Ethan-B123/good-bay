@@ -1,6 +1,5 @@
 const Ebay = require('ebay-node-api');
 import { getRequest } from '../util/https';
-import getSecrets from '../../config/getSecrets';
 
 export interface Credentials {
 	clientID: string;
@@ -29,28 +28,28 @@ export interface ApiItemFromCategory {
 		topRatedSeller: string;
 	};
 }
+
 export interface ApiItemDetail {
-	title: string;
-	subtitle: string;
-	shortDescription: string;
-	itemWebUrl: string;
-	itemId: string; // has v1|#####|0
-	image: string;
-	brand: string;
-	additionalImages: string[];
-	seller: {
-		feedbackPercentage: string;
-		feedbackScore: number; // #of stars
-		username: string;
+	ConditionDisplayName?: string;
+	ConvertedCurrentPrice: { Value: number; CurrencyID: string };
+	Description: string;
+	ItemID: number; // comes in as string
+	ItemSpecifics?: { Name: string; Value: string[] }[];
+	Location: string;
+	PictureURL: string[];
+	PrimaryCategoryName: string[];
+	Quantity: number;
+	QuantityAvailableHint: string;
+	QuantitySold: number;
+	Subtitle?: string;
+	Title: string;
+	ViewItemURLForNaturalSearch: string;
+	Seller: {
+		FeedbackRatingStar: string;
+		FeedbackScore: number;
+		PositiveFeedbackPercent: number;
+		UserID: string;
 	};
-	price: {
-		currency: string;
-		value: string;
-	};
-	localizedAspects: {
-		name: string;
-		value: string;
-	}[];
 }
 
 export const init = (cred: Credentials) => {
@@ -111,29 +110,26 @@ export const init = (cred: Credentials) => {
 			return formatted;
 		},
 		async getItem(id: number) {
-			await ebay.getAccessToken();
-			const data = await ebay.getItem(`v1|${id}|0`);
+			const response = await getRequest(
+				`https://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid=${cred.clientID}&siteid=0&version=967&ItemID=${id}&IncludeSelector=Description,ItemSpecifics,Details,Seller,Subtitle`
+			);
+			const { Item } = response;
 			const retVal: ApiItemDetail = {
-				title: data.title,
-				subtitle: data.subtitle || '',
-				shortDescription: data.shortDescription,
-				seller: {
-					feedbackPercentage: data.seller.feedbackPercentage,
-					feedbackScore: data.seller.feedbackScore,
-					username: data.seller.username
-				},
-				price: {
-					currency: data.price.currency,
-					value: data.price.value
-				},
-				itemWebUrl: data.itemWebUrl,
-				localizedAspects: data.localizedAspects,
-				itemId: data.itemId,
-				image: data.image.imageUrl,
-				brand: data.brand,
-				additionalImages: data.additionalImages
-					? data.additionalImages.map(i => i.imageUrl)
-					: []
+				ConditionDisplayName: Item.ConditionDisplayName,
+				ConvertedCurrentPrice: Item.ConvertedCurrentPrice,
+				Description: Item.Description,
+				ItemID: parseInt(Item.ItemID),
+				ItemSpecifics: Item.ItemSpecifics.NameValueList,
+				Location: Item.Location,
+				PictureURL: Item.PictureURL,
+				PrimaryCategoryName: Item.PrimaryCategoryName.split(':'), // "Cell Phones & Accessories:Cell Phone Accessories:Screen Protectors"
+				Quantity: Item.Quantity,
+				QuantityAvailableHint: Item.QuantityAvailableHint,
+				QuantitySold: Item.QuantitySold,
+				Subtitle: Item.Subtitle,
+				Title: Item.Title,
+				ViewItemURLForNaturalSearch: Item.ViewItemURLForNaturalSearch,
+				Seller: Item.Seller
 			};
 			return retVal;
 		}

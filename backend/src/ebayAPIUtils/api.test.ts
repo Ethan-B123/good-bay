@@ -14,7 +14,7 @@ describe('getting data from the api', () => {
 
 	try {
 		beforeAll(async () => {
-			const cats = await ebay.getCategories(-1);
+			const cats = await ebay.getCategories(550);
 			testCategoryResponse = cats;
 			console.log(`getting items from category: ${cats.children[0].id}`);
 			const items = await ebay.getItemsByCategory(cats.children[0].id);
@@ -66,22 +66,20 @@ describe('getting data from the api', () => {
 	});
 
 	test('Pulls all data from "getItemsByCategory"', async () => {
-		expect(testItemDetail.title).not.toBeUndefined();
-		expect(testItemDetail.subtitle).not.toBeUndefined();
-		expect(testItemDetail.shortDescription).not.toBeUndefined();
-		expect(testItemDetail.itemWebUrl).not.toBeUndefined();
-		expect(testItemDetail.itemId).not.toBeUndefined();
-		expect(testItemDetail.image).not.toBeUndefined();
-		expect(testItemDetail.brand).not.toBeUndefined();
-		expect(testItemDetail.additionalImages).not.toBeUndefined();
-
-		expect(testItemDetail.seller.feedbackPercentage).not.toBeUndefined();
-		expect(testItemDetail.seller.feedbackScore).not.toBeUndefined();
-		expect(testItemDetail.seller.username).not.toBeUndefined();
-
-		expect(testItemDetail.price.currency).not.toBeUndefined();
-		expect(testItemDetail.price.value).not.toBeUndefined();
-
-		expect(Array.isArray(testItemDetail.localizedAspects)).toBe(true);
+		// expect(testItemDetail.ConditionDisplayName).not.toBeUndefined();
+		expect(testItemDetail.ConvertedCurrentPrice).not.toBeUndefined();
+		expect(testItemDetail.Description).not.toBeUndefined();
+		expect(testItemDetail.ItemID).not.toBeUndefined();
+		// expect(testItemDetail.ItemSpecifics).not.toBeUndefined();
+		expect(testItemDetail.Location).not.toBeUndefined();
+		expect(testItemDetail.PictureURL).not.toBeUndefined();
+		expect(testItemDetail.PrimaryCategoryName).not.toBeUndefined();
+		expect(testItemDetail.Quantity).not.toBeUndefined();
+		expect(testItemDetail.QuantityAvailableHint).not.toBeUndefined();
+		expect(testItemDetail.QuantitySold).not.toBeUndefined();
+		// expect(testItemDetail.Subtitle).not.toBeUndefined();
+		expect(testItemDetail.Title).not.toBeUndefined();
+		expect(testItemDetail.ViewItemURLForNaturalSearch).not.toBeUndefined();
+		expect(testItemDetail.Seller).not.toBeUndefined();
 	});
 });
