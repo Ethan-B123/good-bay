@@ -6,11 +6,8 @@ import {
 	useParams
 } from 'react-router-dom';
 import { Category } from '../components/Category';
-import {Item} from "../components/Item"
-const Test: React.FC = () => {
-	const { id } = useParams();
-	return <div>{id}</div>;
-};
+// import { Item } from '../components/Item';
+import { ItemShow } from './ItemShow/ItemShow';
 
 export const App: React.FC = () => {
 	return (
@@ -20,7 +17,7 @@ export const App: React.FC = () => {
 					<Category />
 				</Route>
 				<Route path="/items/:id">
-					<Item />
+					<ItemShow />
 				</Route>
 			</Switch>
 		</Router>

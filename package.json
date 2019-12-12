@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
+		"postinstall": "npm i --prefix=backend && npm i --prefix=frontend",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"be-dev": "npm run dev --prefix=backend",
 		"fe-dev": "npm start --prefix=frontend"

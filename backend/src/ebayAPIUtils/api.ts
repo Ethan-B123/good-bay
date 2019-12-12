@@ -32,9 +32,11 @@ export interface ApiItemFromCategory {
 export interface ApiItemDetail {
 	ConditionDisplayName?: string;
 	ConvertedCurrentPrice: { Value: number; CurrencyID: string };
-	Description: string;
+	Description: string | null;
+	TextDescription: string;
+	PrimaryCategoryIDPath: string[];
 	ItemID: number; // comes in as string
-	ItemSpecifics?: { Name: string; Value: string[] }[];
+	ItemSpecifics: { Name: string; Value: string[] }[];
 	Location: string;
 	PictureURL: string[];
 	PrimaryCategoryName: string[];
@@ -67,7 +69,7 @@ export const init = (cred: Credentials) => {
 				`https://api.ebay.com/Shopping?appid=${cred.clientID}&callname=GetCategoryInfo&version=967&siteid=0&responseencoding=JSON&CategoryID=${id}&IncludeSelector=ChildCategories`
 			);
 			const all: ApiCategory[] = response.CategoryArray.Category.map(
-				category => ({
+				(category: any) => ({
 					name: category.CategoryName,
 					id: parseInt(category.CategoryID),
 					level: parseInt(category.CategoryLevel),
@@ -84,9 +86,9 @@ export const init = (cred: Credentials) => {
 				`https://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME=${cred.clientID}&OPERATION-NAME=findItemsByCategory&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&categoryId=${id}&outputSelector(0)=SellerInfo&outputSelector(1)=PictureURLLarge&GLOBAL-ID=EBAY-US`
 			);
 			const filtered = response.findItemsByCategoryResponse[0].searchResult[0].item.filter(
-				item => item.pictureURLLarge
+				(item: any) => item.pictureURLLarge
 			);
-			const formatted: ApiItemFromCategory[] = filtered.map(item => {
+			const formatted: ApiItemFromCategory[] = filtered.map((item: any) => {
 				const out: ApiItemFromCategory = {
 					galleryURL: item.galleryURL[0],
 					itemId: parseInt(item.itemId[0]),
@@ -111,15 +113,21 @@ export const init = (cred: Credentials) => {
 		},
 		async getItem(id: number) {
 			const response = await getRequest(
-				`https://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid=${cred.clientID}&siteid=0&version=967&ItemID=${id}&IncludeSelector=Description,ItemSpecifics,Details,Seller,Subtitle`
+				`https://open.api.ebay.com/shopping?callname=GetSingleItem&responseencoding=JSON&appid=${cred.clientID}&siteid=0&version=967&ItemID=${id}&IncludeSelector=Description,ItemSpecifics,Details,Seller,Subtitle,TextDescription`
 			);
 			const { Item } = response;
 			const retVal: ApiItemDetail = {
 				ConditionDisplayName: Item.ConditionDisplayName,
 				ConvertedCurrentPrice: Item.ConvertedCurrentPrice,
-				Description: Item.Description,
+				Description: Item.TextDescription ? Item.Description : null,
+				PrimaryCategoryIDPath: Item.PrimaryCategoryIDPath.split(':'),
+				TextDescription: Item.TextDescription
+					? Item.TextDescription
+					: Item.Description,
 				ItemID: parseInt(Item.ItemID),
-				ItemSpecifics: Item.ItemSpecifics.NameValueList,
+				ItemSpecifics: Item.ItemSpecifics
+					? Item.ItemSpecifics.NameValueList
+					: [],
 				Location: Item.Location,
 				PictureURL: Item.PictureURL,
 				PrimaryCategoryName: Item.PrimaryCategoryName.split(':'), // "Cell Phones & Accessories:Cell Phone Accessories:Screen Protectors"

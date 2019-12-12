@@ -16,12 +16,14 @@ export const Item: React.FC = () => {
 			setItemRes(data);
 			const document = frameEl.current.contentDocument;
 			if (!document) return console.log('return');
-			document.body.innerHTML = data.Description;
+			document.body.innerHTML = data.Description
+				? data.Description
+				: data.TextDescription;
 		})();
 	}, [id, frameEl.current]);
 	let element = itemRes ? 'here' : '';
-  console.log(itemRes);
-  
+	console.log(itemRes);
+
 	return (
 		<div>
 			{element}

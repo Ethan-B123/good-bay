@@ -6,7 +6,7 @@ import { sign } from 'jsonwebtoken';
 import { User } from '../entity/User';
 
 export const init = (connection: Connection) => {
-  const router = Router();
+	const router = Router();
 
 	router.get('/self', useJWT, (req, res: ResponseWithJwt) => {
 		const id = res.locals.jwtPayload.id;
