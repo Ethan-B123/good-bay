@@ -85,8 +85,13 @@ export const init = (cred: Credentials) => {
 			const response = await getRequest(
 				`https://svcs.ebay.com/services/search/FindingService/v1?SECURITY-APPNAME=${cred.clientID}&OPERATION-NAME=findItemsByCategory&SERVICE-VERSION=1.0.0&RESPONSE-DATA-FORMAT=JSON&categoryId=${id}&outputSelector(0)=SellerInfo&outputSelector(1)=PictureURLLarge&GLOBAL-ID=EBAY-US`
 			);
-			const filtered = response.findItemsByCategoryResponse[0].searchResult[0].item.filter(
-				(item: any) => item.pictureURLLarge
+			const filtered = response.findItemsByCategoryResponse[0].searchResult[0].item.map(
+				(item: any) => {
+					item.pictureURLLarge = item.pictureURLLarge
+						? item.pictureURLLarge
+						: item.galleryURL;
+					return item;
+				}
 			);
 			const formatted: ApiItemFromCategory[] = filtered.map((item: any) => {
 				const out: ApiItemFromCategory = {

@@ -18,3 +18,7 @@
   font-weight: 700;
   font-style: normal
 }
+
+.cat-bg {
+  background-image: url(./CatItemBg.png);
+}

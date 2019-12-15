@@ -5,6 +5,7 @@ import {
 	ApiCategoriesResponse,
 	ApiCategoryItemsResponse
 } from '../../../backend/src/routes/EbayAPI';
+import { IndexItem } from './IndexItem';
 
 export const Category: React.FC = () => {
 	const { id } = useParams();
@@ -42,8 +43,8 @@ export const Category: React.FC = () => {
 	let itemElements: null | JSX.Element[] = null;
 	if (items && showItems)
 		itemElements = items.map(cr => (
-			<div key={cr.itemId}>
-				<Link to={`/items/${cr.itemId}`}>{cr.title}</Link>
+			<div key={cr.itemId} style={{ width: '250px', minWidth: '250px' }}>
+				<IndexItem item={cr} />
 			</div>
 		));
 	console.log(showItems);
@@ -52,7 +53,11 @@ export const Category: React.FC = () => {
 		<div>
 			{catElements}
 			<button onClick={() => setShowItems(!showItems)}>Show Items</button>
+      <div className="cat-index-container">
+
 			{itemElements}
+      </div>
+
 		</div>
 	);
 };
